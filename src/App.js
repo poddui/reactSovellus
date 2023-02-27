@@ -15,17 +15,18 @@ function App() {
     setTodo({...todo, [event.target.name]: event.target.value});
   }
 
+
   return (
-    <div className="App">
-      <form onSubmit={addTodo}>
-        <label for="text">Tehtävä: </label>
-        <input type="text" name="desc" value={todo.desc} onChange={inputChanged}/>
-        <label for="date"> Päivämäärä: </label>
-        <input type="date" name="date" value={todo.date} onChange={inputChanged}/>
-        <input type="submit" value="Add"/>
-      </form>
-      <Todotable todos={todos} />
-    </div>
+      <div className="App">
+        <form onSubmit={addTodo}>
+            <label htmlFor="text">Tehtävä: </label>
+            <input type="text" name="desc" id="desc" value={todo.desc} onChange={inputChanged}/>
+            <label htmlFor="date"> Päivämäärä: </label>
+            <input type="date" name="date" id="text" value={todo.date} onChange={inputChanged}/>
+            <input type="submit" value="Add"/>
+          </form>
+          <Todotable todos={todos} setTodos={setTodos}/>
+      </div>
   );
 }
 
