@@ -39,3 +39,7 @@
 table{
   margin:auto;
 }
+body{
+  background: rgb(76,217,254);
+  background: linear-gradient(90deg, rgba(76,217,254,1) 0%, rgba(134,255,108,1) 100%, rgba(0,212,255,1) 100%);
+}
