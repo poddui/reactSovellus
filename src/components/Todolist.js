@@ -8,13 +8,14 @@ import TextField from '@mui/material/TextField';
 import Stack from '@mui/material/Stack'
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import 'dayjs/locale/en-gb';
+import dayjs from 'dayjs';
 
 export default function Todolist() {
 
-  const [todo, setTodo] = useState({ desc: '', date: '' });
+  const [todo, setTodo] = useState({ desc: '', date: dayjs(new Date()) , prio:''});
   const [todos, setTodos] = useState([]);
   const gridRef = useRef();
-
 
   const deleteEvent = () => {
     if (gridRef.current.getSelectedNodes().length > 0) {
@@ -28,7 +29,8 @@ export default function Todolist() {
 
   const addTodo = (event) => {
     event.preventDefault();
-    setTodos([...todos, todo]);
+    const newTodo = {...todo, date: todo.date.format("DD / MM / YYYY")}
+    setTodos([...todos, newTodo]);
   }
 
   const inputChanged = (event) => {
@@ -36,56 +38,62 @@ export default function Todolist() {
   }
 
   const handleDateChange = (date) => {
+    console.log(date)
     setTodo({ ...todo, date: date });
   }
 
   const columns = [
-    { headerName: 'Tehtävä', field: 'desc', sortable: true, floatingFilter: true, filter: true },
-    { headerName: 'Päivämäärä', field: 'date', sortable: true, floatingFilter: true, filter: true },
+    { headerName: 'Tehtävä', field: 'desc', sortable: true, floatingFilter: true, filter: true, flex: 2 },
+    { headerName: 'Päivämäärä', field: 'date', sortable: true, floatingFilter: true, filter: true, flex: 2  },
+    { headerName: 'Prioriteetti', field: 'prio', sortable: true, floatingFilter: true, filter: true, flex: 1 ,
+      cellStyle: params => params.value === "High" ? {color: 'red'} : {color: 'black'} }
   ]
 
   return (
     <>
-    <div class="pickers">
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <form onSubmit={addTodo}>
-      <Stack direction="row" spacing={2} justifyContent="center" alignItems="center">
-        <TextField
-            label="Description"
-            variant="standard"
-            name="desc" value={todo.desc}
-            onChange={inputChanged}/>
-          <DatePicker
-               label="Date"
-               value={todo.date}
-               onChange={handleDateChange}
-          />
-
-
-        <Button onClick={addTodo} variant="contained">Add</Button>
-        <Button onClick={deleteEvent}variant="contained">Delete</Button>
-      </Stack>
-      </form>
-      </LocalizationProvider>
-      </div>
-      <div
-        className="ag-theme-material"
-        style={{
-          height: '1200px',
-          width: '80%',
-          margin: 'auto'
-        }}
-      >
-        <AgGridReact
-          ref={gridRef}
-          onGridReady={ params => gridRef.current = params.api }
-          rowSelection="single"
-          columnDefs={columns}
-          rowData={todos}
-          animateRows={true}
+      <div className="pickers">
+        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={"en-gb"}>
+          <form onSubmit={addTodo}>
+            <Stack direction="row" spacing={2} justifyContent="center" alignItems="center">
+              <TextField
+                  label="Description"
+                  variant="outlined"
+                  name="desc" value={todo.desc}
+                  onChange={inputChanged}/>
+                <DatePicker
+                    label="Date"
+                    value={todo.date}
+                    onChange={handleDateChange}
+                />
+                <TextField
+                  label="Priority"
+                  variant="outlined"
+                  name="prio" value={todo.prio}
+                  onChange={inputChanged}/>
+              <Button onClick={addTodo} variant="contained">Add</Button>
+              <Button onClick={deleteEvent}variant="contained" color="error">Delete</Button>
+            </Stack>
+          </form>
+        </LocalizationProvider>
+        </div>
+        <div
+          className="ag-theme-material"
+          style={{
+            height: '1200px',
+            width: '80%',
+            margin: 'auto'
+          }}
         >
-        </AgGridReact>
-      </div>
+          <AgGridReact
+            ref={gridRef}
+            onGridReady={ params => gridRef.current = params.api }
+            rowSelection="single"
+            columnDefs={columns}
+            rowData={todos}
+            animateRows={true}
+          >
+          </AgGridReact>
+        </div>
     </>
   );
 }
